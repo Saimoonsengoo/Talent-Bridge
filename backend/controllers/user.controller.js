@@ -9,23 +9,24 @@ export const register = async (req, res) => {
     const { fullname, email, phoneNumber, password, role } = req.body;
 
     if (!fullname || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({
-        message: "All fields are required",
-        success: false,
+      return res.status(400).json({ message: "All fields are required", success: false });
+    }
+
+    // ❌ Prevent admin creation from frontend
+    if (!["student", "recruiter"].includes(role)) {
+      return res.status(403).json({
+        message: "Invalid role",
+        success: false
       });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({
-        message: "User already exists with this email",
-        success: false,
-      });
+      return res.status(400).json({ message: "User already exists", success: false });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 1️⃣ Create user first (to get userId)
     const user = await User.create({
       fullname,
       email,
@@ -35,34 +36,27 @@ export const register = async (req, res) => {
       profile: {},
     });
 
-    // 2️⃣ Upload profile photo (optional)
     if (req.file) {
       const photoUrl = await uploadToSupabase(req.file, user._id);
       user.profile.profilePhoto = photoUrl;
       await user.save();
     }
 
-    return res.status(201).json({
-      message: "Account created successfully",
-      success: true,
-    });
+    res.status(201).json({ message: "Account created successfully", success: true });
+
   } catch (error) {
-    console.error("REGISTER ERROR:", error);
-    res.status(500).json({
-      message: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: error.message, success: false });
   }
 };
 
 // ================= LOGIN =================
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
-    if (!email || !password || !role) {
+    if (!email || !password) {
       return res.status(400).json({
-        message: "Something is missing",
+        message: "Email and password are required",
         success: false,
       });
     }
@@ -75,6 +69,14 @@ export const login = async (req, res) => {
       });
     }
 
+    // 🔒 BLOCK LOCKED USERS
+    if (user.isLocked) {
+      return res.status(403).json({
+        message: "Your account has been locked by admin",
+        success: false,
+      });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
@@ -83,15 +85,8 @@ export const login = async (req, res) => {
       });
     }
 
-    if (user.role !== role) {
-      return res.status(400).json({
-        message: "Account does not exist for this role",
-        success: false,
-      });
-    }
-
     const token = jwt.sign(
-      { userId: user._id },
+      { userId: user._id, role: user.role },
       process.env.SECRET_KEY,
       { expiresIn: "1d" }
     );
@@ -106,25 +101,22 @@ export const login = async (req, res) => {
     };
 
     return res
-      .status(200)
       .cookie("token", token, {
         httpOnly: true,
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000,
       })
+      .status(200)
       .json({
         message: `Welcome back ${user.fullname}`,
         user: userData,
         success: true,
       });
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
-    res.status(500).json({
-      message: error.message,
-      success: false,
-    });
+    res.status(500).json({ message: error.message, success: false });
   }
 };
+
 
 // ================= LOGOUT =================
 export const logout = async (req, res) => {
@@ -199,3 +191,63 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+// ================= Super ADMIN =================
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find(); // adjust model
+        res.status(200).json({ users });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+export const toggleUserLock = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    if (user.role === "admin") {
+      return res.status(403).json({
+        message: "Cannot lock admin",
+        success: false,
+      });
+    }
+
+    user.isLocked = !user.isLocked;
+    await user.save();
+
+    res.status(200).json({
+      message: `User ${user.isLocked ? "locked" : "unlocked"} successfully`,
+      success: true,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      success: false,
+    });
+  }
+};
+// Delete user
+export const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+

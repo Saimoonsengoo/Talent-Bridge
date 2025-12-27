@@ -10,10 +10,15 @@ import JobDescription from './components/JobDescription'
 import Companies from './components/admin/Companies'
 import CompanyCreate from './components/admin/CompanyCreate'
 import CompanySetup from './components/admin/CompanySetup'
-import AdminJobs from "./components/admin/AdminJobs";
+import AdminJobsRecruiter from "./components/admin/AdminJobs";
 import PostJob from './components/admin/PostJob'
 import Applicants from './components/admin/Applicants'
 import ProtectedRoute from './components/admin/ProtectedRoute'
+import AdminLayout from './components/SuperAdmin/AdminLayout'
+import AdminUsers from './components/SuperAdmin/AdminUser'
+import AdminCompanies from './components/SuperAdmin/AdminCompanies'
+import AdminJobs from './components/SuperAdmin/AdminJobs'
+import AdminDashboard from './components/SuperAdmin/AdminDashboard'
 
 
 const appRouter = createBrowserRouter([
@@ -45,31 +50,58 @@ const appRouter = createBrowserRouter([
     path: "/profile",
     element: <Profile />
   },
-  // admin ke liye yha se start hoga
+  // Admin Routes
   {
-    path:"/admin/companies",
-    element: <ProtectedRoute><Companies/></ProtectedRoute>
+    path: "/admin/companies",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <Companies />
+    </ProtectedRoute>
   },
   {
-    path:"/admin/companies/create",
-    element: <ProtectedRoute><CompanyCreate/></ProtectedRoute> 
+    path: "/admin/companies/create",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <CompanyCreate />
+    </ProtectedRoute>
   },
   {
-    path:"/admin/companies/:id",
-    element:<ProtectedRoute><CompanySetup/></ProtectedRoute> 
+    path: "/admin/companies/:id",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <CompanySetup />
+    </ProtectedRoute>
   },
   {
-    path:"/admin/jobs",
-    element:<ProtectedRoute><AdminJobs/></ProtectedRoute> 
+    path: "/admin/jobs",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <AdminJobsRecruiter />
+    </ProtectedRoute>
   },
   {
-    path:"/admin/jobs/create",
-    element:<ProtectedRoute><PostJob/></ProtectedRoute> 
+    path: "/admin/jobs/create",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <PostJob />
+    </ProtectedRoute>
   },
   {
-    path:"/admin/jobs/:id/applicants",
-    element:<ProtectedRoute><Applicants/></ProtectedRoute> 
+    path: "/admin/jobs/:id/applicants",
+    element: <ProtectedRoute allowedRoles={["recruiter"]}>
+      <Applicants />
+    </ProtectedRoute>
   },
+  // Super Admin Dashboard 
+  {
+    path: "/superadmin",
+    element: <ProtectedRoute allowedRoles={["admin"]}><AdminLayout /></ProtectedRoute>,
+    children: [
+      { path: "", element: <AdminDashboard /> }, // default
+      { path: "dashboard", element: <AdminDashboard /> },
+      { path: "users", element: <AdminUsers /> },
+      { path: "companies", element: <AdminCompanies /> },
+      { path: "jobs", element: <AdminJobs /> }
+    ]
+  }
+
+
+
 
 ])
 function App() {

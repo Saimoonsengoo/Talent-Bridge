@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
+import createAdminIfNotExists from "./utils/createAdmin.js";
 import userRoute from "./routes/user.route.js";
 import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
@@ -34,7 +35,8 @@ app.use("/api/v1/application", applicationRoute);
 
 
 
-app.listen(PORT,()=>{
+app.listen(PORT,async()=>{
     connectDB();
+    await createAdminIfNotExists();
     console.log(`Server running at port ${PORT}`);
 })

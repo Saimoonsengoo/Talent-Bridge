@@ -50,6 +50,20 @@ export const getCompany = async (req, res) => {
         console.log(error);
     }
 }
+//get all company
+export const getAllCompany = async (req, res) => {
+    try {
+        const companies = await Company.find(); // return all companies
+        return res.status(200).json({
+            companies,
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Server error" });
+    }
+}
+
 // get company by id
 export const getCompanyById = async (req, res) => {
     try {
@@ -102,3 +116,15 @@ export const updateCompany = async (req, res) => {
         console.log(error);
     }
 }
+
+// Delete company
+export const deleteCompany = async (req, res) => {
+    try {
+        const company = await Company.findByIdAndDelete(req.params.id);
+        if (!company) return res.status(404).json({ message: "Company not found" });
+
+        res.status(200).json({ message: "Company deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
