@@ -16,7 +16,7 @@ export const uploadToSupabase = async (file, userId) => {
 
   if (error) throw error;
 
-  // ✅ Signed URL (works for PRIVATE bucket)
+  // ✅ Signed URL 
   const { data } = supabase.storage
     .from("Bucket")
     .getPublicUrl(filePath); 

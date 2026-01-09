@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 
+// Create admin if not exists 
+// if admin already exists, do nothing
 const createAdminIfNotExists = async () => {
     const adminEmail = "admin@jobportal.com";
 
@@ -29,7 +31,7 @@ const createAdminIfNotExists = async () => {
         }
     });
 
-    console.log("✅ Admin created");
+    console.log("----Admin created----");
 };
 
 export default createAdminIfNotExists;
