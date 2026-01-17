@@ -159,16 +159,16 @@ const Signup = () => {
                         />
                     </div>
 
-                    {loading ? (
+                    {/* {loading ? (
                         <Button className="w-full py-3 flex justify-center items-center gap-2" disabled>
                             <Loader2 className='animate-spin w-5 h-5' />
                             Please wait
                         </Button>
-                    ) : (
+                    ) : ( */}
                         <Button type="submit" className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition">
                             Sign Up
                         </Button>
-                    )}
+                    {/* )} */}
 
                     <p className='text-sm text-center text-gray-500 mt-4'>
                         Already have an account?{' '}

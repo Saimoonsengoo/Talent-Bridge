@@ -35,8 +35,18 @@ app.use("/api/v1/application", applicationRoute);
 
 
 
-app.listen(PORT,async()=>{
-    connectDB();
-    await createAdminIfNotExists();
-    console.log(`Server running at port ${PORT}`);
-})
+const startServer = async () => {
+    try {
+        await connectDB(); // ⬅️ WAIT for DB
+        await createAdminIfNotExists(); // ⬅️ Now safe
+
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running at port ${PORT}`);
+        });
+    } catch (error) {
+        console.error("❌ Server failed to start:", error);
+        process.exit(1);
+    }
+};
+
+startServer();

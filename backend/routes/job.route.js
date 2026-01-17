@@ -11,7 +11,7 @@ router.route("/get").get(isAuthenticated, getAllJobs);
 // get jobs posted by logged in admin
 router.route("/getadminjobs").get(isAuthenticated, getAdminJobs);
 // get job by ID
-router.route("/get/:id").get(isAuthenticated, getJobById);
+router.route("/get/:id").get( getJobById);
 // delete job
 router.delete("/:id", deleteJob);
 

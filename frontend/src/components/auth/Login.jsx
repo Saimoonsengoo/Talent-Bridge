@@ -109,19 +109,19 @@ const Login = () => {
             />
           </div>
 
-          {loading ? (
+          {/* {loading ? (
             <Button className="w-full py-3 flex justify-center gap-2" disabled>
               <Loader2 className="w-5 h-5 animate-spin" />
               Please wait
             </Button>
-          ) : (
+          ) : ( */}
             <Button
               type="submit"
               className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
             >
               Login
             </Button>
-          )}
+          {/* )} */}
 
           <p className="text-sm text-center text-gray-500 mt-4">
             Don't have an account?{" "}
