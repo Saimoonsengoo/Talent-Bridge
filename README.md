@@ -86,3 +86,28 @@ http://localhost:3000/..
 ```
 **Note**: The frontend interacts with backend APIs for data and with Supabase for image uploads.
 
+## Usage Guide
+
+### Registration / Login
+1. Open **Sign Up** page.  
+2. Select role: **Job Seeker** or **Employer**.  
+3. Enter email/password → Supabase Auth handles account creation.  
+4. Login → redirected to role-based dashboard.
+
+### Job Seeker Dashboard
+- Browse jobs  
+- Apply to jobs  
+- Upload profile image (stored in Supabase)  
+- Track application status  
+
+### Employer Dashboard
+- Post new jobs with images → images stored in Supabase  
+- Edit/Delete jobs  
+- View applicants  
+
+### Admin Dashboard
+- View all users and jobs  
+- Manage access and roles  
+- Monitor system statistics  
+
+
