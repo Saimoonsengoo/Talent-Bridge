@@ -41,9 +41,22 @@ It uses a **hybrid backend setup** with **MongoDB Atlas** for main data storage 
 ```bash
 git clone https://github.com/Saimoonsengoo/Talent-Bridge.git
 cd Talent-Bridge
+```
 
 ### 2. Backend Setup
 #### 1.Navigate to backend:
 ```bash
 cd backend
-
+```
+#### 2. Install dependencies:
+```bash
+npm install
+```
+#### 3. Create .env File
+```ini
+PORT=5000
+MONGO_URI=your_mongodb_atlas_connection_string
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_service_role_key
+JWT_SECRET=your_jwt_secret
+``` 
