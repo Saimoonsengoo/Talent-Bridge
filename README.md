@@ -41,3 +41,9 @@ It uses a **hybrid backend setup** with **MongoDB Atlas** for main data storage 
 ```bash
 git clone https://github.com/Saimoonsengoo/Talent-Bridge.git
 cd Talent-Bridge
+
+### 2. Backend Setup
+#### 1.Navigate to backend:
+```bash
+cd backend
+
